@@ -24,3 +24,5 @@ Route::resource('products', 'ProductController');
 Route::get('/login', function () {
     return 'Aqui será a view de login';
 })->name('login');
+
+Route::redirect('/', '/products', 301);

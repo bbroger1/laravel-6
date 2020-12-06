@@ -23,57 +23,63 @@ class ProductController extends Controller
         //ou aqueles onde não será aplicado except
         $this->middleware('auth')->except([
             'index',
-            'show'
+            'show',
+            'create',
+            'store',
+            'edit',
+            'update',
+            'destroy'
         ]);
     }
 
     public function index()
     {
         $products = [
-            'Produtos 1',
-            'Produtos 2',
-            'Produtos 3',
+            'TV',
+            'Geladeira',
+            'Fogão',
         ];
 
-        return $products;
+        return view('admin.pages.products.index', compact('products'));
     }
 
     public function show($id)
     {
         $products = [
-            'Produtos 1',
-            'Produtos 2',
-            'Produtos 3',
+            'TV',
+            'Geladeira',
+            'Fogão',
         ];
         $id = $id - 1;
 
         if (isset($products[$id])) {
             $product = $products[$id];
-            return 'Página do ' . $product;
+            return view('admin.pages.products.show', compact('product'));
         }
 
-        return "Produto não encontrado.";
+        $msg = "Produto não encontrado.";
+        return view('admin.pages.products.show', compact('msg'));
     }
 
     public function create()
     {
-        return 'Exibindo o formulário de cadastro';
+        return view('admin.pages.products.create');
     }
 
     //injeção de dependência transforma a instanciação do objeto no parâmetro da função
     public function store(Request $request)
     {
-        return 'Cadastrar o produto';
+        return 'Cadastrando o produto: ' . $request->name;
     }
 
     public function edit($id)
     {
-        return 'Exibindo o formulário de edição do produto: ' . $id;
+        return view('admin.pages.products.edit', compact('id'));
     }
 
     public function update($id)
     {
-        return 'Editar o produto: ' . $id;
+        return 'Editando o produto: ' . $id;
     }
 
     public function destroy($id)
