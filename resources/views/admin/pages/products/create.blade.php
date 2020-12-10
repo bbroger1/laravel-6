@@ -3,24 +3,15 @@
 @section('title', 'Cadastro Produtos')
 
 @section('content')
-    <a href="{{ route('products.index') }}">Listar</a>
+    <div class="text-center mt-2">
+        <h3>Cadastrar um novo produto</h3>
+    </div>
 
-    <h1>Cadastrar um novo produto</h1>
+    <div class="col mt-2 mb-2" style="text-align: right;">
+        <a href="{{ route('products.index') }}" class="btn btn-primary">Listar</a>
+    </div>
 
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            <ul>
-                <li>
-                    {{ $error }}
-                </li>
-            </ul>
-        @endforeach
-    @endif
     <form action="{{ route('products.store')}}" method="post" enctype="multipart/form-data">
-        @csrf
-    <input type="text" name="name" id="name" placeholder="Nome:" value="{{ old('name') }}">
-        <input type="text" name="description" id="description" placeholder="Descrição:" value="{{ old('description') }}">
-        <input type="file" name="photo" id="photo">
-        <button type="submit">Cadastrar</button>
+        @include('admin.pages.products._partials.form')
     </form>
 @endsection

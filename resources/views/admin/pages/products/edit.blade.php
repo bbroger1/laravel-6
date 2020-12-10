@@ -3,15 +3,17 @@
 @section('title', 'Editar Produtos')
 
 @section('content')
-    <a href="{{ route('products.index') }}">Listar</a>
+    <div class="col" style="text-align: right;">
+        <a href="{{ route('products.index') }}" class="btn btn-primary mt-2 mb-2">Listar</a>
+        <a href="{{ route('products.create') }}" class="btn btn-success mt-2 mb-2 ml-2">Cadastrar</a>
+    </div>
 
-    <h1>Editar um novo produto {{$id}}</h1>
+    <div class="text-center">
+        <h3>Editar o produto {{$product->name}}</h3>
+    </div>
 
-    <form action="{{ route('products.update', $id)}}" method="post">
-        @csrf
+    <form action="{{ route('products.update', $product->id)}}" method="post" class="form-group">
         @method('PUT')
-        <input type="text" name="name" id="name" placeholder="Nome:">
-        <input type="text" name="description" id="description" placeholder="Descrição:">
-        <button type="submit">Editar</button>
+        @include('admin.pages.products._partials.form')
     </form>
 @endsection

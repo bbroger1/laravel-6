@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUpdateProductRequest;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     protected $request, $user;
+    private $repository;
 
-    public function __construct(Request $request)
+    public function __construct(Request $request, Product $product)
     {
         //fazendo essa chamada no construct eu não preciso instanciar ou injetar o Request a cada necessidade
         $this->request = $request;
+        $this->repository = $product;
 
         //o middleware pode ser passado direto no controller - não é boa pratica
         //$this->middleware('auth');
@@ -29,37 +32,25 @@ class ProductController extends Controller
             'store',
             'edit',
             'update',
-            'destroy'
+            'destroy',
+            'search'
         ]);
     }
 
     public function index()
     {
-        $products = [
-            'TV',
-            'Geladeira',
-            'Fogão',
-        ];
+        $products = $this->repository::paginate(5);
 
         return view('admin.pages.products.index', compact('products'));
     }
 
     public function show($id)
     {
-        $products = [
-            'TV',
-            'Geladeira',
-            'Fogão',
-        ];
-        $id = $id - 1;
-
-        if (isset($products[$id])) {
-            $product = $products[$id];
-            return view('admin.pages.products.show', compact('product'));
+        if (!$product = $this->repository::where('id', $id)->first()) {
+            return redirect()->back();
         }
 
-        $msg = "Produto não encontrado.";
-        return view('admin.pages.products.show', compact('msg'));
+        return view('admin.pages.products.show', compact('product'));
     }
 
     public function create()
@@ -70,7 +61,7 @@ class ProductController extends Controller
     //injeção de dependência transforma a instanciação do objeto no parâmetro da função
     public function store(StoreUpdateProductRequest $request)
     {
-        dd('ok');
+
         //metódo para retornar todos os campos do request
         //dd($request->all());
         //metódo para retornar os campos determinados pelo desenvolvedor
@@ -90,6 +81,7 @@ class ProductController extends Controller
             'photo' => 'required|image'
         ]);*/
 
+        /*
         //upload de arquivos
         if ($request->file('photo')->isValid()) {
             //com esse comando o laravel determina o nome
@@ -98,24 +90,47 @@ class ProductController extends Controller
             //podemos determinar o nome do arquivo
             $nameFile = $request->name . '.' . $request->file('photo')->extension();
             dd($request->file('photo')->storeAs('products', $nameFile));
-        }
+        }*/
 
+        //passando array com parametro do create
+        $product = $request->only('name', 'description', 'price');
+        Product::create($product);
 
-        //return 'Cadastrando o produto: ' . $request->name;
+        return redirect()->route('products.index');
     }
 
     public function edit($id)
     {
-        return view('admin.pages.products.edit', compact('id'));
+        if (!$product = $this->repository::find($id)) {
+            return redirect()->back();
+        }
+        return view('admin.pages.products.edit', compact('product'));
     }
 
-    public function update($id)
+    public function update(StoreUpdateProductRequest $request, $id)
     {
-        return 'Editando o produto: ' . $id;
+        if (!$product = $this->repository::find($id)) {
+            return redirect()->back();
+        }
+
+        $product->update($request->all());
+        return redirect()->route('products.index');
     }
 
     public function destroy($id)
     {
-        return 'Deletar o produto: ' . $id;
+        if (!$product = $this->repository::find($id)) {
+            return redirect()->back();
+        }
+
+        $product->delete();
+        return redirect()->route('products.index');
+    }
+
+    public function search(Request $request)
+    {
+        $filter = $request->except('_token');
+        $products = $this->repository->search($request->filter);
+        return view('admin.pages.products.index', compact(['products', 'filter']));
     }
 }

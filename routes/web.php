@@ -19,6 +19,7 @@ Route::delete('products/{id}', 'ProductController@destroy')->name('products.dest
 //rotas usando resource
 //usando middleware na rota, nesse caso somente usuários autenticados podem acessar a rota products
 //Route::resource('products', 'ProductController')->middleware('auth');
+Route::any('products/search', 'ProductController@search')->name('products.search');
 Route::resource('products', 'ProductController');
 
 Route::get('/login', function () {
