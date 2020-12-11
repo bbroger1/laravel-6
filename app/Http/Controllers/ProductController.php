@@ -21,12 +21,7 @@ class ProductController extends Controller
         //o middleware pode ser passado direto no controller - não é boa pratica
         //$this->middleware('auth');
         //pode aplicar o middleware em alguns metodos optando por indicar aqueles onde será aplicado (only)
-        /*$this->middleware('auth')->only([
-            'create', 'store'
-        ]);*/
-
-        //ou aqueles onde não será aplicado except
-        $this->middleware('auth')->except([
+        $this->middleware('auth')->only([
             'index',
             'show',
             'create',
@@ -36,6 +31,18 @@ class ProductController extends Controller
             'destroy',
             'search'
         ]);
+
+        //ou aqueles onde não será aplicado except
+        /*$this->middleware('auth')->except([
+            'index',
+            'show',
+            'create',
+            'store',
+            'edit',
+            'update',
+            'destroy',
+            'search'
+        ]);*/
     }
 
     public function index()
@@ -150,10 +157,10 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     }
 
-    public function search(Request $request)
+    public function search()
     {
-        $filter = $request->except('_token');
-        $products = $this->repository->search($request->filter);
+        $filter = $this->request->except('_token');
+        $products = $this->repository->search($this->request->filter);
         return view('admin.pages.products.index', compact(['products', 'filter']));
     }
 }

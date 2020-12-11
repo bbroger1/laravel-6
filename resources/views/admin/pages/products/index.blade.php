@@ -56,7 +56,7 @@
                     <td>{{ $product->price }}</td>
                     <td>
                     <a href="{{ route('products.show', $product->id)}}" class="btn btn-sm btn-outline-primary mr-2">Detalhes</a>
-                    <a href="{{ route('products.edit', $product->id)}}" class="btn btn-sm btn-outline-warning mr-2">Editar</a>
+                    <a href="{{ route('products.edit', $product->id)}}" class="btn btn-sm btn-outline-success mr-2">Editar</a>
                 </tr>
                 @empty
                     <p>Não existem produtos cadastrados.</p>

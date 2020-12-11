@@ -26,4 +26,12 @@ Route::get('/login', function () {
     return 'Aqui será a view de login';
 })->name('login');
 
-Route::redirect('/', '/products', 301);
+//Route::redirect('/', '/products', 301);
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/', function () {
+    return view('welcome');
+});
