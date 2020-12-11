@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -81,20 +82,21 @@ class ProductController extends Controller
             'photo' => 'required|image'
         ]);*/
 
-        /*
+        $product = $request->only('name', 'description', 'price');
+
         //upload de arquivos
-        if ($request->file('photo')->isValid()) {
-            //com esse comando o laravel determina o nome
-            //dd($request->file('photo')->store('products'));
+        if ($request->hasFile('image') && $request->image->isValid()) {
 
             //podemos determinar o nome do arquivo
-            $nameFile = $request->name . '.' . $request->file('photo')->extension();
-            dd($request->file('photo')->storeAs('products', $nameFile));
-        }*/
+            $nameFile = $request->name . '.' . $request->file('image')->extension();
+            $imagePath = $request->file('image')->storeAs('products', $nameFile);
+
+            $product['image'] = $imagePath;
+        }
 
         //passando array com parametro do create
-        $product = $request->only('name', 'description', 'price');
-        Product::create($product);
+
+        $this->repository::create($product);
 
         return redirect()->route('products.index');
     }
@@ -113,7 +115,23 @@ class ProductController extends Controller
             return redirect()->back();
         }
 
-        $product->update($request->all());
+        $data = $request->all();
+
+        //upload de arquivos
+        if ($request->hasFile('image') && $request->image->isValid()) {
+            //excluir a imagem antiga
+            if ($product->image && Storage::exists($product->image)) {
+                Storage::delete($product->image);
+            }
+
+            //podemos determinar o nome do arquivo
+            $nameFile = $request->name . '.' . $request->file('image')->extension();
+            $imagePath = $request->file('image')->storeAs('products', $nameFile);
+
+            $data['image'] = $imagePath;
+        }
+
+        $product->update($data);
         return redirect()->route('products.index');
     }
 
@@ -121,6 +139,11 @@ class ProductController extends Controller
     {
         if (!$product = $this->repository::find($id)) {
             return redirect()->back();
+        }
+
+        //excluir a imagem do produto se existir
+        if ($product->image && Storage::exists($product->image)) {
+            Storage::delete($product->image);
         }
 
         $product->delete();

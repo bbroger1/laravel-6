@@ -43,6 +43,7 @@
 
     <table class="table table-striped text-center">
         <thead>
+            <th>Imagem</th>
             <th>Nome</th>
             <th>Preço</th>
             <th>Ações</th>
@@ -50,11 +51,12 @@
         <tbody>
             @forelse ($products as $product)
                 <tr>
+                    <td><img src="{{ url("storage/{$product->image}")}}" alt="{{ $product->name }}" width='100'></td>
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->price }}</td>
                     <td>
-                    <a href="{{ route('products.show', $product->id)}}" class="btn btn-sm btn-primary mr-2">Detalhes</a>
-                    <a href="{{ route('products.edit', $product->id)}}" class="btn btn-sm btn-success mr-2">Editar</a>
+                    <a href="{{ route('products.show', $product->id)}}" class="btn btn-sm btn-outline-primary mr-2">Detalhes</a>
+                    <a href="{{ route('products.edit', $product->id)}}" class="btn btn-sm btn-outline-warning mr-2">Editar</a>
                 </tr>
                 @empty
                     <p>Não existem produtos cadastrados.</p>
