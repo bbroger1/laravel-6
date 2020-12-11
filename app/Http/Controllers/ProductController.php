@@ -21,7 +21,7 @@ class ProductController extends Controller
         //o middleware pode ser passado direto no controller - não é boa pratica
         //$this->middleware('auth');
         //pode aplicar o middleware em alguns metodos optando por indicar aqueles onde será aplicado (only)
-        $this->middleware('auth')->only([
+        $this->middleware(['auth', 'check.is.admin'])->only([
             'index',
             'show',
             'create',
